@@ -1,6 +1,10 @@
 const express = require("express");
 const app = express();
 
+// Use dotenv file for storing backend secrets like API key
+const dotenv = require("dotenv");
+dotenv.config();
+
 // allows serving of the JS file
 app.use(express.static(__dirname));
 

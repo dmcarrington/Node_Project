@@ -10,7 +10,6 @@ function checkForExistingElement(nodeInfo) {
 
 // get details of your node and then display them
 function displayDetails(data) {
-  console.log(data);
   if (data) {
     checkForExistingElement(data);
     data.forEach((node) => {

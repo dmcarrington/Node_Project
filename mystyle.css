@@ -1,0 +1,32 @@
+body {
+  background-color: gray;
+}
+
+h1 {
+  color: rgba(238, 204, 128, 1);
+  margin-left: 20px;
+  text-align: center;
+}
+
+.nodeContainer {
+  width: 50%;
+  padding: 1rem;
+  border: solid;
+  border-radius: 12px;
+  background-image: linear-gradient(
+    to right,
+    rgba(160, 33, 217, 1),
+    rgba(238, 204, 128, 1)
+  );
+}
+
+.nodeContainer:before {
+  padding: 1rem;
+}
+
+.connectionButton {
+  border-radius: 8px;
+  padding: 12px 28px;
+  font-size: 12px;
+  margin-bottom: 12px;
+}

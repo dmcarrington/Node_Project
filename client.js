@@ -59,6 +59,7 @@ function displayDetails(data) {
   }
 }
 
+// Stop the specified node
 async function stopNode(node_id) {
   const bodyJson = { node_id: node_id };
   let response = await fetch("http://localhost:8080/node/stop", {
@@ -73,6 +74,7 @@ async function stopNode(node_id) {
   return data;
 }
 
+// Start the specified node - note it will need to be unlocked via Voltage
 async function startNode(node_id) {
   const bodyJson = { node_id: node_id };
   let response = await fetch("http://localhost:8080/node/start", {
@@ -103,4 +105,47 @@ async function displayNodeDetails() {
   fetchAsync("http://localhost:8080/getNodeInfo").then((data) => {
     displayDetails(data);
   });
+}
+
+async function checkNodeName() {
+  const name = document.getElementsByName("nodename")[0].value;
+  const bodyJson = { node_name: name };
+  let data = null;
+  try {
+    let response = await fetch("http://localhost:8080/node/name", {
+      method: "POST",
+      headers: { "Content-type": "application/json" },
+      body: JSON.stringify(bodyJson),
+    });
+    data = await response.json();
+  } catch (error) {
+    console.log("error communicating with local server");
+  }
+
+  let container = document.getElementsByName("nodenamecheck")[0];
+  // Delete any existing result text
+  const element = document.getElementsByName("resultSpan")[0];
+  if (element) {
+    element.parentNode.removeChild(element);
+  }
+  let resultSpan = document.createElement("span");
+  resultSpan.setAttribute("name", "resultSpan");
+  if (data) {
+    const taken = data["taken"];
+    if (taken) {
+      resultSpan.setAttribute("class", "taken");
+      resultSpan.appendChild(
+        document.createTextNode("Sorry, " + name + " is already taken")
+      );
+    } else {
+      resultSpan.setAttribute("class", "available");
+      resultSpan.appendChild(
+        document.createTextNode(name + " is still available")
+      );
+    }
+  } else {
+    resultSpan.setAttribute("class", "taken");
+    resultSpan.appendChild(document.createTextNode("Error fetching data"));
+  }
+  container.appendChild(resultSpan);
 }

@@ -25,6 +25,7 @@ h1 {
   padding: 1rem;
 }
 
+input,
 button {
   border-radius: 8px;
   padding: 12px 28px;
@@ -55,4 +56,18 @@ button {
 
 .errorMessage {
   color: red;
+}
+
+#nodenamecheck {
+  margin-left: 50px;
+}
+
+.available {
+  color: green;
+  margin-left: 12px;
+}
+
+.taken {
+  color: red;
+  margin-left: 12px;
 }

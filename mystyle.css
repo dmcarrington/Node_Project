@@ -25,11 +25,32 @@ h1 {
   padding: 1rem;
 }
 
-.connectionButton {
+button {
   border-radius: 8px;
   padding: 12px 28px;
   font-size: 12px;
+  margin-top: 12px;
   margin-bottom: 12px;
+}
+
+.running {
+  background-color: darkred;
+}
+
+.stopped {
+  background-color: darkgreen;
+}
+
+.starting {
+  background-color: orange;
+}
+
+.stopping {
+  background-color: orange;
+}
+
+.waiting_unlock {
+  background-color: orange;
 }
 
 .errorMessage {

@@ -1,4 +1,5 @@
 const express = require("express");
+let bodyparser = require("body-parser");
 const app = express();
 
 // Add CORS to allow requests from out client on localhost
@@ -10,6 +11,7 @@ const corsOptions = {
 };
 
 app.use(cors(corsOptions));
+app.use(bodyparser.json());
 
 // Use dotenv file for storing backend secrets like API key
 const dotenv = require("dotenv");
@@ -21,6 +23,44 @@ app.use(express.static(__dirname));
 // index page endpoint that returns the html file
 app.get("/", async (req, res) => {
   res.sendFile(__dirname + "/index.html");
+});
+
+app.post("/node/stop", async (req, res) => {
+  console.log("received stop command");
+  console.log(req.body);
+  const payload = { node_id: req.body["node_id"] };
+  const endpoint = new URL("https://api.voltage.cloud/node/stop");
+  const API_KEY = process.env.VOLTAGE_API_KEY;
+  const response = await fetch(endpoint, {
+    method: "POST",
+    headers: {
+      "X-VOLTAGE-AUTH": API_KEY,
+      "Content-type": "application/json",
+    },
+    body: JSON.stringify(payload),
+  });
+  const data = await response.json();
+  console.log(data);
+  res.send(data);
+});
+
+app.post("/node/start", async (req, res) => {
+  console.log("received start command");
+  console.log(req.body);
+  const payload = { node_id: req.body["node_id"] };
+  const endpoint = new URL("https://api.voltage.cloud/node/start");
+  const API_KEY = process.env.VOLTAGE_API_KEY;
+  const response = await fetch(endpoint, {
+    method: "POST",
+    headers: {
+      "X-VOLTAGE-AUTH": API_KEY,
+      "Content-type": "application/json",
+    },
+    body: JSON.stringify(payload),
+  });
+  const data = await response.json();
+  console.log(data);
+  res.send(data);
 });
 
 // endpoint that returns json of your lighning node

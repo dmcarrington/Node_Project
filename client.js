@@ -110,24 +110,28 @@ async function displayNodeDetails() {
 async function checkNodeName() {
   const name = document.getElementsByName("nodename")[0].value;
   const bodyJson = { node_name: name };
-  let response = await fetch("http://localhost:8080/node/name", {
-    method: "POST",
-    headers: { "Content-type": "application/json" },
-    body: JSON.stringify(bodyJson),
-  });
-  let data = await response.json();
+  let data = null;
+  try {
+    let response = await fetch("http://localhost:8080/node/name", {
+      method: "POST",
+      headers: { "Content-type": "application/json" },
+      body: JSON.stringify(bodyJson),
+    });
+    data = await response.json();
+  } catch (error) {
+    console.log("error communicating with local server");
+  }
+
+  let container = document.getElementsByName("nodenamecheck")[0];
+  // Delete any existing result text
+  const element = document.getElementsByName("resultSpan")[0];
+  if (element) {
+    element.parentNode.removeChild(element);
+  }
+  let resultSpan = document.createElement("span");
+  resultSpan.setAttribute("name", "resultSpan");
   if (data) {
     const taken = data["taken"];
-    let container = document.getElementsByName("nodenamecheck")[0];
-    // Delete any existing result text
-    const element = document.getElementsByName("resultSpan")[0];
-    if (element) {
-      element.parentNode.removeChild(element);
-    }
-
-    let resultSpan = document.createElement("span");
-    resultSpan.setAttribute("name", "resultSpan");
-
     if (taken) {
       resultSpan.setAttribute("class", "taken");
       resultSpan.appendChild(
@@ -139,6 +143,9 @@ async function checkNodeName() {
         document.createTextNode(name + " is still available")
       );
     }
-    container.appendChild(resultSpan);
+  } else {
+    resultSpan.setAttribute("class", "taken");
+    resultSpan.appendChild(document.createTextNode("Error fetching data"));
   }
+  container.appendChild(resultSpan);
 }

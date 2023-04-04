@@ -104,7 +104,7 @@ async function getNodeDetails() {
   });
   const data = await response.json();
   if (data.nodes) {
-    return data.nodes[0];
+    return data.nodes;
   } else {
     return null;
   }

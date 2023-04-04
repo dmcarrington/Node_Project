@@ -10,47 +10,50 @@ function checkForExistingElement(nodeInfo) {
 
 // get details of your node and then display them
 function displayDetails(data) {
+  console.log(data);
   if (data) {
-    const nodeInfo = data;
     checkForExistingElement(data);
-    const container = document.createElement("div");
-    container.setAttribute("class", "nodeContainer");
-    document.body.appendChild(container);
-    for (var key in nodeInfo) {
-      const node = document.createElement("div");
-      node.setAttribute("id", key);
+    data.forEach((node) => {
+      const nodeInfo = node;
+      const container = document.createElement("div");
+      container.setAttribute("class", "nodeContainer");
+      document.body.appendChild(container);
+      for (var key in nodeInfo) {
+        const node = document.createElement("div");
+        node.setAttribute("id", key);
 
-      // Attribute key in bold
-      var keySpan = document.createElement("span");
-      keySpan.style.fontWeight = "bold";
-      keySpan.appendChild(document.createTextNode(key + ": "));
+        // Attribute key in bold
+        var keySpan = document.createElement("span");
+        keySpan.style.fontWeight = "bold";
+        keySpan.appendChild(document.createTextNode(key + ": "));
 
-      // Attribute value in regular text
-      var textSpan = document.createElement("span");
-      textSpan.appendChild(document.createTextNode(nodeInfo[key]));
-      node.appendChild(keySpan);
-      node.appendChild(textSpan);
-      container.appendChild(node);
-    }
-    // update the node state based on the "status" element
-    const status = nodeInfo["status"];
-    var controlBtn = document.createElement("BUTTON");
-    let action = "Start";
-    let onclick = "startNode('" + nodeInfo["node_id"] + "')";
-    if (status === "running") {
-      action = "Stop";
-      onclick = "stopNode('" + nodeInfo["node_id"] + "')";
-    } else if (status === "stopping") {
-      action = "Node Stopping";
-    } else if (status === "starting") {
-      action = "Node Starting";
-    } else if (status === "waiting_unlock") {
-      action = "Node awaiting unlock!";
-    }
-    controlBtn.appendChild(document.createTextNode(action));
-    controlBtn.setAttribute("class", status);
-    controlBtn.setAttribute("onclick", onclick);
-    container.appendChild(controlBtn);
+        // Attribute value in regular text
+        var textSpan = document.createElement("span");
+        textSpan.appendChild(document.createTextNode(nodeInfo[key]));
+        node.appendChild(keySpan);
+        node.appendChild(textSpan);
+        container.appendChild(node);
+      }
+      // update the node state based on the "status" element
+      const status = nodeInfo["status"];
+      var controlBtn = document.createElement("BUTTON");
+      let action = "Start";
+      let onclick = "startNode('" + nodeInfo["node_id"] + "')";
+      if (status === "running") {
+        action = "Stop";
+        onclick = "stopNode('" + nodeInfo["node_id"] + "')";
+      } else if (status === "stopping") {
+        action = "Node Stopping";
+      } else if (status === "starting") {
+        action = "Node Starting";
+      } else if (status === "waiting_unlock") {
+        action = "Node awaiting unlock!";
+      }
+      controlBtn.appendChild(document.createTextNode(action));
+      controlBtn.setAttribute("class", status);
+      controlBtn.setAttribute("onclick", onclick);
+      container.appendChild(controlBtn);
+    });
   } else {
     const container = document.createElement("div");
     container.setAttribute("class", "errorMessage");

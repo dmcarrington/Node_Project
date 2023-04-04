@@ -10,24 +10,45 @@ function checkForExistingElement(nodeInfo) {
 
 // get details of your node and then display them
 function displayDetails(data) {
-  const nodeInfo = data;
-  console.log(nodeInfo);
-  checkForExistingElement(data);
-  for (var key in nodeInfo) {
-    console.log(key);
-    const node = document.createElement("div");
-    node.setAttribute("id", key);
-    var textnode = document.createTextNode(key + ": " + nodeInfo[key]);
-    node.appendChild(textnode);
-    document.body.appendChild(node);
+  if (data) {
+    const nodeInfo = data;
+    checkForExistingElement(data);
+    const container = document.createElement("div");
+    container.setAttribute("class", "nodeContainer");
+    document.body.appendChild(container);
+    for (var key in nodeInfo) {
+      const node = document.createElement("div");
+      node.setAttribute("id", key);
+
+      // Attribute key in bold
+      var keySpan = document.createElement("span");
+      keySpan.style.fontWeight = "bold";
+      keySpan.appendChild(document.createTextNode(key + ": "));
+
+      // Attribute value in regular text
+      var textSpan = document.createElement("span");
+      textSpan.appendChild(document.createTextNode(nodeInfo[key]));
+      node.appendChild(keySpan);
+      node.appendChild(textSpan);
+      container.appendChild(node);
+    }
+  } else {
+    const container = document.createElement("div");
+    container.setAttribute("class", "errorMessage");
+    container.appendChild(document.createTextNode("Error: Failed to connect!"));
+    document.body.appendChild(container);
   }
 }
 
 // Helper funtion to fetch JSON response from our server
 async function fetchAsync(url) {
-  let response = await fetch(url);
-  let data = await response.json();
-  return data;
+  try {
+    let response = await fetch(url);
+    let data = await response.json();
+    return data;
+  } catch (error) {
+    return null;
+  }
 }
 
 // Fetch node details over API via our local server, and update the display

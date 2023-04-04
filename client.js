@@ -32,12 +32,59 @@ function displayDetails(data) {
       node.appendChild(textSpan);
       container.appendChild(node);
     }
+    // update the node state based on the "status" element
+    const status = nodeInfo["status"];
+    var controlBtn = document.createElement("BUTTON");
+    let action = "Start";
+    let onclick = "startNode('" + nodeInfo["node_id"] + "')";
+    if (status === "running") {
+      action = "Stop";
+      onclick = "stopNode('" + nodeInfo["node_id"] + "')";
+    } else if (status === "stopping") {
+      action = "Node Stopping";
+    } else if (status === "starting") {
+      action = "Node Starting";
+    } else if (status === "waiting_unlock") {
+      action = "Node awaiting unlock!";
+    }
+    controlBtn.appendChild(document.createTextNode(action));
+    controlBtn.setAttribute("class", status);
+    controlBtn.setAttribute("onclick", onclick);
+    container.appendChild(controlBtn);
   } else {
     const container = document.createElement("div");
     container.setAttribute("class", "errorMessage");
     container.appendChild(document.createTextNode("Error: Failed to connect!"));
     document.body.appendChild(container);
   }
+}
+
+async function stopNode(node_id) {
+  const bodyJson = { node_id: node_id };
+  let response = await fetch("http://localhost:8080/node/stop", {
+    method: "POST",
+    headers: { "Content-type": "application/json" },
+    body: JSON.stringify(bodyJson),
+  });
+  let data = await response.json();
+  console.log(data);
+
+  displayNodeDetails();
+  return data;
+}
+
+async function startNode(node_id) {
+  const bodyJson = { node_id: node_id };
+  let response = await fetch("http://localhost:8080/node/start", {
+    method: "POST",
+    headers: { "Content-type": "application/json" },
+    body: JSON.stringify(bodyJson),
+  });
+  let data = await response.json();
+  console.log(data);
+
+  displayNodeDetails();
+  return data;
 }
 
 // Helper funtion to fetch JSON response from our server

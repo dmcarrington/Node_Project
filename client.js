@@ -229,9 +229,9 @@ async function confirmNewNode() {
     } else {
       showAlert("alert_success", "Node created successfully");
     }
-    // TODO: handle failure to create the node
   } catch (error) {
     console.log("error communicating with local server");
+    showAlert("alert_error", "Error communicating with server");
   }
   displayNodeDetails();
 }

@@ -105,9 +105,12 @@ async function deleteNode(node_id) {
     body: JSON.stringify(bodyJson),
   });
   let data = await response.json();
-
+  if (data["message"]) {
+    showAlert("alert_error", data["message"]);
+  } else {
+    showAlert("alert_success", "Node deleted successfully");
+  }
   displayNodeDetails();
-  return data;
 }
 
 // Helper funtion to fetch JSON response from our server
@@ -221,6 +224,11 @@ async function confirmNewNode() {
       body: JSON.stringify(bodyJson),
     });
     data = await response.json();
+    if (data["message"]) {
+      showAlert("alert_error", data["message"]);
+    } else {
+      showAlert("alert_success", "Node created successfully");
+    }
     // TODO: handle failure to create the node
   } catch (error) {
     console.log("error communicating with local server");
@@ -260,4 +268,18 @@ async function indicateNewNameAvailable() {
     resultSpan.appendChild(document.createTextNode("Error fetching data"));
   }
   container.appendChild(resultSpan);
+}
+
+// Display the Alert banner with the provided message
+// type can be either alert_success (green) or alert_error (red)
+function showAlert(type, message) {
+  let alert = document.getElementsByName("alert")[0];
+  alert.setAttribute("class", type + " alert");
+  let alertMesssage = document.getElementById("alertMessage");
+  alertMesssage.parentNode.removeChild(alertMesssage);
+  alertMesssage = document.createElement("span");
+  alertMesssage.setAttribute("id", "alertMessage");
+  alertMesssage.appendChild(document.createTextNode(message));
+  alert.appendChild(alertMesssage);
+  alert.setAttribute("style", "display:float");
 }

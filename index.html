@@ -1,20 +1,83 @@
 <!DOCTYPE html>
 <html lang="en">
+  <head>
+    <meta charset="UTF-8" />
 
-<head>
-    <meta charset="UTF-8">
-    <script type="text/javascript" src="./client.js"></script>
-    <link rel="stylesheet" href="mystyle.css">
+    <link rel="stylesheet" href="mystyle.css" />
     <title>Node Information Page</title>
-</head>
+  </head>
 
-<body>
+  <body>
     <h1>Voltage Node Information</h1>
     <span id="actionbar">
-    <button type="button" onclick="displayNodeDetails()" class="connectionButton">Click to get info</button>
-    <span id="nodenamecheck" name="nodenamecheck">Check available node name: <input type="text" name="nodename"/><button type="button" onclick="checkNodeName()">Check</button></span>
-    
+      <button
+        type="button"
+        onclick="displayNodeDetails()"
+        class="connectionButton"
+      >
+        Click to get info
+      </button>
+      <span id="nodenamecheck" name="nodenamecheck"
+        >Check available node name: <input type="text" name="nodename" /><button
+          type="button"
+          onclick="checkNodeName()"
+        >
+          Check
+        </button></span
+      >
+      <span id="createnode"
+        ><button id="createnodebtn" onclick="createNodeDialog()">
+          Create Node
+        </button></span
+      >
     </span>
-</body>
 
+    <!-- pop-up dialog box, containing a form for the user to enter details of a new node to create -->
+    <dialog id="createNodeDialog">
+      <form method="dialog">
+        <p>
+          <label for="createNodeNetwork">Network:</label>
+          <select id="createNodeNetwork" name="createNodeNetwork">
+            <option>testnet</option>
+            <option>mainnet</option>
+          </select>
+        </p>
+        <p>
+          <span name="nameStatus">
+            <label for="createNodeName">Node Name:</label>
+            <input
+              type="text"
+              id="createNodeName"
+              name="createNodeName"
+              onfocusout="indicateNewNameAvailable()"
+            />
+          </span>
+        </p>
+        <p>
+          <label for="purchasedType">Purchase Type:</label>
+          <select id="purchasedType" name="purchasedType">
+            <option>trial</option>
+            <option>paid</option>
+            <option>ondemand</option>
+          </select>
+        </p>
+        <p>
+          <label for="nodeType">Node Type:</label>
+          <select id="nodeType" name="nodeType">
+            <option>standard</option>
+            <option>lite</option>
+          </select>
+        </p>
+
+        <div>
+          <button id="cancel" type="reset" onclick="closeModal()">
+            Cancel
+          </button>
+          <button onclick="confirmNewNode()">Confirm</button>
+        </div>
+      </form>
+    </dialog>
+  </body>
+
+  <script type="text/javascript" src="./client.js"></script>
 </html>

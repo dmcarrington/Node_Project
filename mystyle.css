@@ -26,6 +26,7 @@ h1 {
 }
 
 input,
+select,
 button {
   border-radius: 8px;
   padding: 12px 28px;
@@ -70,4 +71,8 @@ button {
 .taken {
   color: red;
   margin-left: 12px;
+}
+
+#createnode {
+  margin-left: 50px;
 }

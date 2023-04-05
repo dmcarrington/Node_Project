@@ -1,7 +1,7 @@
 // check if elements are already displayed
 // if they are then delete them
 function checkForExistingElement(nodeInfo) {
-  const elements = document.getElementsByTagName("div");
+  const elements = document.getElementsByClassName("nodeContainer");
   for (let i = elements.length - 1; i >= 0; i--) {
     const div = elements[i];
     div.parentElement.removeChild(div);
@@ -70,7 +70,6 @@ async function stopNode(node_id) {
     body: JSON.stringify(bodyJson),
   });
   let data = await response.json();
-  console.log(data);
 
   displayNodeDetails();
   return data;
@@ -85,7 +84,6 @@ async function startNode(node_id) {
     body: JSON.stringify(bodyJson),
   });
   let data = await response.json();
-  console.log(data);
 
   displayNodeDetails();
   return data;
@@ -109,9 +107,9 @@ async function displayNodeDetails() {
   });
 }
 
-async function checkNodeName() {
-  const name = document.getElementsByName("nodename")[0].value;
-  const bodyJson = { node_name: name };
+// General function to check whether a given node name is available on the selected network
+async function getNodeName(name, network) {
+  const bodyJson = { node_name: name, network: network };
   let data = null;
   try {
     let response = await fetch("http://localhost:8080/node/name", {
@@ -123,6 +121,14 @@ async function checkNodeName() {
   } catch (error) {
     console.log("error communicating with local server");
   }
+  return data;
+}
+
+// Check whether the new name entered in the text box in the action bar is available, and display the result
+async function checkNodeName() {
+  const name = document.getElementsByName("nodename")[0].value;
+  // For this function assume we are only interested in mainnet
+  const data = await getNodeName(name, "mainnet");
 
   let container = document.getElementsByName("nodenamecheck")[0];
   // Delete any existing result text
@@ -132,6 +138,89 @@ async function checkNodeName() {
   }
   let resultSpan = document.createElement("span");
   resultSpan.setAttribute("name", "resultSpan");
+  if (data) {
+    const taken = data["taken"];
+    if (taken) {
+      resultSpan.setAttribute("class", "taken");
+      resultSpan.appendChild(
+        document.createTextNode("Sorry, " + name + " is already taken")
+      );
+    } else {
+      resultSpan.setAttribute("class", "available");
+      resultSpan.appendChild(
+        document.createTextNode(name + " is still available")
+      );
+    }
+  } else {
+    resultSpan.setAttribute("class", "taken");
+    resultSpan.appendChild(document.createTextNode("Error fetching data"));
+  }
+  container.appendChild(resultSpan);
+}
+
+// Display the dialog to create a new node
+function createNodeDialog() {
+  const dialog = document.getElementById("createNodeDialog");
+  dialog.showModal();
+}
+
+// Close the node creation dialog
+function closeModal() {
+  const dialog = document.getElementById("createNodeDialog");
+  dialog.close();
+}
+
+// Execute the creation of the new node, using the params entered
+async function confirmNewNode() {
+  const name = document.getElementsByName("createNodeName")[0].value;
+  const network = document.getElementsByName("createNodeNetwork")[0].value;
+  const purchased_type = document.getElementsByName("purchasedType")[0].value;
+  const type = document.getElementsByName("nodeType")[0].value;
+  const settings = {
+    autopilot: true,
+    grpc: true,
+    rest: true,
+    keysend: true,
+    whitelist: ["1.1.1.1", "2.2.2.2"],
+    alias: name,
+    color: "#EF820D",
+  };
+  bodyJson = {
+    name: name,
+    network: network,
+    purchased_type: purchased_type,
+    type: type,
+    settings: settings,
+  };
+  let data = null;
+  try {
+    let response = await fetch("http://localhost:8080/node/create", {
+      method: "POST",
+      headers: { "Content-type": "application/json" },
+      body: JSON.stringify(bodyJson),
+    });
+    data = await response.json();
+    // TODO: handle failure to create the node
+  } catch (error) {
+    console.log("error communicating with local server");
+  }
+  displayNodeDetails();
+}
+
+// Check whether the name for the new node is available on the selected network
+async function indicateNewNameAvailable() {
+  const name = document.getElementsByName("createNodeName")[0].value;
+  const network = document.getElementsByName("createNodeNetwork")[0].value;
+  const data = await getNodeName(name, network);
+  let container = document.getElementsByName("nameStatus")[0];
+
+  // Delete any existing result text
+  const element = document.getElementsByName("createResultSpan")[0];
+  if (element) {
+    element.parentNode.removeChild(element);
+  }
+  let resultSpan = document.createElement("span");
+  resultSpan.setAttribute("name", "createResultSpan");
   if (data) {
     const taken = data["taken"];
     if (taken) {

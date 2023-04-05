@@ -66,8 +66,30 @@ app.post("/node/start", async (req, res) => {
 app.post("/node/name", async (req, res) => {
   console.log("received name command");
   console.log(req.body);
-  const payload = { network: "mainnet", node_name: req.body["node_name"] };
+  const payload = {
+    network: req.body["network"],
+    node_name: req.body["node_name"],
+  };
   const endpoint = new URL("https://api.voltage.cloud/node/name");
+  const API_KEY = process.env.VOLTAGE_API_KEY;
+  const response = await fetch(endpoint, {
+    method: "POST",
+    headers: {
+      "X-VOLTAGE-AUTH": API_KEY,
+      "Content-type": "application/json",
+    },
+    body: JSON.stringify(payload),
+  });
+  const data = await response.json();
+  console.log(data);
+  res.send(data);
+});
+
+app.post("/node/create", async (req, res) => {
+  console.log("received create command");
+  console.log(req.body);
+  const payload = req.body;
+  const endpoint = new URL("https://api.voltage.cloud/node/create");
   const API_KEY = process.env.VOLTAGE_API_KEY;
   const response = await fetch(endpoint, {
     method: "POST",

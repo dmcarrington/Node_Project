@@ -52,6 +52,13 @@ function displayDetails(data) {
       controlBtn.setAttribute("class", status);
       controlBtn.setAttribute("onclick", onclick);
       container.appendChild(controlBtn);
+
+      var deleteBtn = document.createElement("button");
+      deleteBtn.appendChild(document.createTextNode("Delete"));
+      deleteBtn.setAttribute("class", "deleteBtn");
+      const deleteClick = "deleteNode('" + nodeInfo["node_id"] + "')";
+      deleteBtn.setAttribute("onclick", deleteClick);
+      container.appendChild(deleteBtn);
     });
   } else {
     const container = document.createElement("div");
@@ -79,6 +86,20 @@ async function stopNode(node_id) {
 async function startNode(node_id) {
   const bodyJson = { node_id: node_id };
   let response = await fetch("http://localhost:8080/node/start", {
+    method: "POST",
+    headers: { "Content-type": "application/json" },
+    body: JSON.stringify(bodyJson),
+  });
+  let data = await response.json();
+
+  displayNodeDetails();
+  return data;
+}
+
+// Delete the specified node
+async function deleteNode(node_id) {
+  const bodyJson = { node_id: node_id };
+  let response = await fetch("http://localhost:8080/node/delete", {
     method: "POST",
     headers: { "Content-type": "application/json" },
     body: JSON.stringify(bodyJson),

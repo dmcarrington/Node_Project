@@ -37,6 +37,7 @@ button {
 
 .running {
   background-color: darkred;
+  color: white;
 }
 
 .stopped {
@@ -75,4 +76,10 @@ button {
 
 #createnode {
   margin-left: 50px;
+}
+
+.deleteBtn {
+  background-color: red;
+  color: white;
+  float: right;
 }

@@ -109,6 +109,7 @@ async function displayNodeDetails() {
   });
 }
 
+// General function to check whether a given node name is available on the selected network
 async function getNodeName(name, network) {
   const bodyJson = { node_name: name, network: network };
   let data = null;
@@ -125,8 +126,10 @@ async function getNodeName(name, network) {
   return data;
 }
 
+// Check whether the new name entered in the text box in the action bar is available, and display the result
 async function checkNodeName() {
   const name = document.getElementsByName("nodename")[0].value;
+  // For this function assume we are only interested in mainnet
   const data = await getNodeName(name, "mainnet");
 
   let container = document.getElementsByName("nodenamecheck")[0];
@@ -157,18 +160,21 @@ async function checkNodeName() {
   container.appendChild(resultSpan);
 }
 
+// Display the dialog to create a new node
 function createNodeDialog() {
   const dialog = document.getElementById("createNodeDialog");
   console.log(dialog);
   dialog.showModal();
 }
 
+// Close the node creation dialog
 function closeModal() {
   const dialog = document.getElementById("createNodeDialog");
   console.log(dialog);
   dialog.close();
 }
 
+// Execute the creation of the new node, using the params entered
 async function confirmNewNode() {
   console.log;
   const name = document.getElementsByName("createNodeName")[0].value;
@@ -200,13 +206,15 @@ async function confirmNewNode() {
       body: JSON.stringify(bodyJson),
     });
     data = await response.json();
+    // TODO: handle failure to create the node
   } catch (error) {
     console.log("error communicating with local server");
   }
   displayNodeDetails();
 }
 
-async function checkNameAvailable() {
+// Check whether the name for the new node is available on the selected network
+async function indicateNewNameAvailable() {
   console.log("checkNameAvailable");
   const name = document.getElementsByName("createNodeName")[0].value;
   const network = document.getElementsByName("createNodeNetwork")[0].value;

@@ -52,6 +52,13 @@ function displayDetails(data) {
       controlBtn.setAttribute("class", status);
       controlBtn.setAttribute("onclick", onclick);
       container.appendChild(controlBtn);
+
+      var deleteBtn = document.createElement("button");
+      deleteBtn.appendChild(document.createTextNode("Delete"));
+      deleteBtn.setAttribute("class", "deleteBtn");
+      const deleteClick = "deleteNode('" + nodeInfo["node_id"] + "')";
+      deleteBtn.setAttribute("onclick", deleteClick);
+      container.appendChild(deleteBtn);
     });
   } else {
     const container = document.createElement("div");
@@ -87,6 +94,23 @@ async function startNode(node_id) {
 
   displayNodeDetails();
   return data;
+}
+
+// Delete the specified node
+async function deleteNode(node_id) {
+  const bodyJson = { node_id: node_id };
+  let response = await fetch("http://localhost:8080/node/delete", {
+    method: "POST",
+    headers: { "Content-type": "application/json" },
+    body: JSON.stringify(bodyJson),
+  });
+  let data = await response.json();
+  if (data["message"]) {
+    showAlert("alert_error", data["message"]);
+  } else {
+    showAlert("alert_success", "Node deleted successfully");
+  }
+  displayNodeDetails();
 }
 
 // Helper funtion to fetch JSON response from our server
@@ -200,9 +224,14 @@ async function confirmNewNode() {
       body: JSON.stringify(bodyJson),
     });
     data = await response.json();
-    // TODO: handle failure to create the node
+    if (data["message"]) {
+      showAlert("alert_error", data["message"]);
+    } else {
+      showAlert("alert_success", "Node created successfully");
+    }
   } catch (error) {
     console.log("error communicating with local server");
+    showAlert("alert_error", "Error communicating with server");
   }
   displayNodeDetails();
 }
@@ -239,4 +268,30 @@ async function indicateNewNameAvailable() {
     resultSpan.appendChild(document.createTextNode("Error fetching data"));
   }
   container.appendChild(resultSpan);
+}
+
+// Display the Alert banner with the provided message
+// type can be either alert_success (green) or alert_error (red)
+function showAlert(type, message) {
+  let alert = document.getElementsByName("alert")[0];
+  alert.setAttribute("class", type + " alert");
+  let alertMesssage = document.getElementById("alertMessage");
+  alertMesssage.parentNode.removeChild(alertMesssage);
+  alertMesssage = document.createElement("span");
+  alertMesssage.setAttribute("id", "alertMessage");
+  alertMesssage.appendChild(document.createTextNode(message));
+  alert.appendChild(alertMesssage);
+  alert.setAttribute("style", "display:float");
+}
+
+// Close the alert by fading it out
+function closeAlert() {
+  var div = document.getElementsByName("alert")[0];
+  // Set the opacity of div to 0 (transparent)
+  div.style.opacity = "0";
+
+  // Hide the div after 600ms (the same amount of milliseconds it takes to fade out)
+  setTimeout(function () {
+    div.style.display = "none";
+  }, 600);
 }

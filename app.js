@@ -44,6 +44,25 @@ app.post("/node/stop", async (req, res) => {
   res.send(data);
 });
 
+app.post("/node/delete", async (req, res) => {
+  console.log("received delete command");
+  console.log(req.body);
+  const payload = { node_id: req.body["node_id"] };
+  const endpoint = new URL("https://api.voltage.cloud/node/delete");
+  const API_KEY = process.env.VOLTAGE_API_KEY;
+  const response = await fetch(endpoint, {
+    method: "POST",
+    headers: {
+      "X-VOLTAGE-AUTH": API_KEY,
+      "Content-type": "application/json",
+    },
+    body: JSON.stringify(payload),
+  });
+  const data = await response.json();
+  console.log(data);
+  res.send(data);
+});
+
 app.post("/node/start", async (req, res) => {
   console.log("received start command");
   console.log(req.body);
@@ -67,8 +86,8 @@ app.post("/node/name", async (req, res) => {
   console.log("received name command");
   console.log(req.body);
   const payload = {
-    network: req.body["network"],
     node_name: req.body["node_name"],
+    network: req.body["network"],
   };
   const endpoint = new URL("https://api.voltage.cloud/node/name");
   const API_KEY = process.env.VOLTAGE_API_KEY;

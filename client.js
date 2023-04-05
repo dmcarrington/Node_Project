@@ -1,7 +1,7 @@
 // check if elements are already displayed
 // if they are then delete them
 function checkForExistingElement(nodeInfo) {
-  const elements = document.getElementsByTagName("div");
+  const elements = document.getElementsByClassName("nodeContainer");
   for (let i = elements.length - 1; i >= 0; i--) {
     const div = elements[i];
     div.parentElement.removeChild(div);
@@ -109,9 +109,8 @@ async function displayNodeDetails() {
   });
 }
 
-async function checkNodeName() {
-  const name = document.getElementsByName("nodename")[0].value;
-  const bodyJson = { node_name: name };
+async function getNodeName(name, network) {
+  const bodyJson = { node_name: name, network: network };
   let data = null;
   try {
     let response = await fetch("http://localhost:8080/node/name", {
@@ -123,6 +122,12 @@ async function checkNodeName() {
   } catch (error) {
     console.log("error communicating with local server");
   }
+  return data;
+}
+
+async function checkNodeName() {
+  const name = document.getElementsByName("nodename")[0].value;
+  const data = await getNodeName(name, "mainnet");
 
   let container = document.getElementsByName("nodenamecheck")[0];
   // Delete any existing result text
@@ -132,6 +137,92 @@ async function checkNodeName() {
   }
   let resultSpan = document.createElement("span");
   resultSpan.setAttribute("name", "resultSpan");
+  if (data) {
+    const taken = data["taken"];
+    if (taken) {
+      resultSpan.setAttribute("class", "taken");
+      resultSpan.appendChild(
+        document.createTextNode("Sorry, " + name + " is already taken")
+      );
+    } else {
+      resultSpan.setAttribute("class", "available");
+      resultSpan.appendChild(
+        document.createTextNode(name + " is still available")
+      );
+    }
+  } else {
+    resultSpan.setAttribute("class", "taken");
+    resultSpan.appendChild(document.createTextNode("Error fetching data"));
+  }
+  container.appendChild(resultSpan);
+}
+
+function createNodeDialog() {
+  const dialog = document.getElementById("createNodeDialog");
+  console.log(dialog);
+  dialog.showModal();
+}
+
+function closeModal() {
+  const dialog = document.getElementById("createNodeDialog");
+  console.log(dialog);
+  dialog.close();
+}
+
+async function confirmNewNode() {
+  console.log;
+  const name = document.getElementsByName("createNodeName")[0].value;
+  const network = document.getElementsByName("createNodeNetwork")[0].value;
+  const purchased_type = document.getElementsByName("purchasedType")[0].value;
+  const type = document.getElementsByName("nodeType")[0].value;
+  const settings = {
+    autopilot: true,
+    grpc: true,
+    rest: true,
+    keysend: true,
+    whitelist: ["1.1.1.1", "2.2.2.2"],
+    alias: name,
+    color: "#EF820D",
+  };
+  bodyJson = {
+    name: name,
+    network: network,
+    purchased_type: purchased_type,
+    type: type,
+    settings: settings,
+  };
+  console.log(bodyJson);
+  let data = null;
+  try {
+    let response = await fetch("http://localhost:8080/node/create", {
+      method: "POST",
+      headers: { "Content-type": "application/json" },
+      body: JSON.stringify(bodyJson),
+    });
+    data = await response.json();
+  } catch (error) {
+    console.log("error communicating with local server");
+  }
+  displayNodeDetails();
+}
+
+async function checkNameAvailable() {
+  console.log("checkNameAvailable");
+  const name = document.getElementsByName("createNodeName")[0].value;
+  const network = document.getElementsByName("createNodeNetwork")[0].value;
+  console.log(network);
+  const data = await getNodeName(name, network);
+  console.log(data);
+  let container = document.getElementsByName("nameStatus")[0];
+  console.log(container);
+
+  // Delete any existing result text
+  const element = document.getElementsByName("createResultSpan")[0];
+  if (element) {
+    element.parentNode.removeChild(element);
+  }
+  let resultSpan = document.createElement("span");
+  resultSpan.setAttribute("name", "createResultSpan");
   if (data) {
     const taken = data["taken"];
     if (taken) {

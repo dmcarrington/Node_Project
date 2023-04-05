@@ -284,6 +284,7 @@ function showAlert(type, message) {
   alert.setAttribute("style", "display:float");
 }
 
+// Close the alert by fading it out
 function closeAlert() {
   var div = document.getElementsByName("alert")[0];
   // Set the opacity of div to 0 (transparent)

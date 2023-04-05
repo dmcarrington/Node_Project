@@ -70,7 +70,6 @@ async function stopNode(node_id) {
     body: JSON.stringify(bodyJson),
   });
   let data = await response.json();
-  console.log(data);
 
   displayNodeDetails();
   return data;
@@ -85,7 +84,6 @@ async function startNode(node_id) {
     body: JSON.stringify(bodyJson),
   });
   let data = await response.json();
-  console.log(data);
 
   displayNodeDetails();
   return data;
@@ -163,20 +161,17 @@ async function checkNodeName() {
 // Display the dialog to create a new node
 function createNodeDialog() {
   const dialog = document.getElementById("createNodeDialog");
-  console.log(dialog);
   dialog.showModal();
 }
 
 // Close the node creation dialog
 function closeModal() {
   const dialog = document.getElementById("createNodeDialog");
-  console.log(dialog);
   dialog.close();
 }
 
 // Execute the creation of the new node, using the params entered
 async function confirmNewNode() {
-  console.log;
   const name = document.getElementsByName("createNodeName")[0].value;
   const network = document.getElementsByName("createNodeNetwork")[0].value;
   const purchased_type = document.getElementsByName("purchasedType")[0].value;
@@ -197,7 +192,6 @@ async function confirmNewNode() {
     type: type,
     settings: settings,
   };
-  console.log(bodyJson);
   let data = null;
   try {
     let response = await fetch("http://localhost:8080/node/create", {
@@ -215,14 +209,10 @@ async function confirmNewNode() {
 
 // Check whether the name for the new node is available on the selected network
 async function indicateNewNameAvailable() {
-  console.log("checkNameAvailable");
   const name = document.getElementsByName("createNodeName")[0].value;
   const network = document.getElementsByName("createNodeNetwork")[0].value;
-  console.log(network);
   const data = await getNodeName(name, network);
-  console.log(data);
   let container = document.getElementsByName("nameStatus")[0];
-  console.log(container);
 
   // Delete any existing result text
   const element = document.getElementsByName("createResultSpan")[0];
